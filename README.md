@@ -12,7 +12,24 @@ An nginx-based HTTP gateway wrapper for [kindle-send](https://github.com/nikhil1
 
 ## Setup
 
-### 1. Configure
+### Option 1: Using the Public Docker Image (Recommended)
+
+The Docker image is automatically built and pushed to GitHub Container Registry with each push to main.
+
+```bash
+docker run -d \
+  -p 8080:80 \
+  -v ./config:/config \
+  -v ./data:/data \
+  --name kindle-gateway \
+  ghcr.io/yourusername/kindle-send-gateway:latest
+```
+
+Replace `yourusername` with the actual repository owner.
+
+### Option 2: Build Locally
+
+#### 1. Configure
 
 Edit `config/config.json` with your credentials:
 
@@ -29,13 +46,13 @@ Edit `config/config.json` with your credentials:
 
 **Note:** Use an [App Password](https://support.google.com/accounts/answer/185833) for Gmail, not your regular password.
 
-### 2. Build
+#### 2. Build
 
 ```bash
 docker build -t kindle-send-gateway .
 ```
 
-### 3. Run
+#### 3. Run
 
 ```bash
 docker run -d \
@@ -109,3 +126,28 @@ The service will:
 - **fcgiwrap**: FastCGI wrapper for executing shell scripts
 - **send.sh**: CGI script that parses the URL parameter and calls kindle-send
 - **kindle-send**: The underlying tool that does the actual conversion and sending
+
+## CI/CD Pipeline
+
+This project uses GitHub Actions to automatically build and publish Docker images to [GitHub Container Registry](https://github.com/features/packages).
+
+### Image Tags
+
+When you push to the repository, images are tagged with:
+- `latest` - Points to the main branch
+- `main` - Current main branch build
+- `<commit-sha>` - Specific commit
+- `v*` - Semantic version tags (when you create releases)
+
+### Example Usage with Public Images
+
+```bash
+# Use the latest version
+docker pull ghcr.io/username/kindle-send-gateway:latest
+
+# Use a specific version
+docker pull ghcr.io/username/kindle-send-gateway:v1.0.0
+
+# Use a specific commit
+docker pull ghcr.io/username/kindle-send-gateway:main-abc123def456
+```
