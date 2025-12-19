@@ -19,19 +19,23 @@ echo ""
 # Validate URL parameter
 if [ -z "$URL" ]; then
     echo "Error: Missing 'url' parameter"
-    echo "Usage: /send?url=https://example.com/article"
     echo "[send.sh] ERROR: Missing URL parameter" >&2
     exit 1
 fi
 
-# Execute kindle-send
-echo "Processing URL: $URL"
-echo "---"
-echo "[send.sh] Executing kindle-send with URL: $URL" >&2
-/kindle-send --config /config/config.json send "$URL" 2>&1 || {
-    echo "Error executing kindle-send"
-    echo "[send.sh] ERROR: kindle-send failed" >&2
-    exit 1
-}
+# Send simple response to client
+echo "Request accepted. Processing URL: $URL"
 
-echo "[send.sh] Success" >&2
+# Execute kindle-send (redirect output to container's main stderr)
+echo "[send.sh] Executing kindle-send with URL: $URL" > /proc/1/fd/2
+/kindle-send --config /config/config.json send "$URL" 2>&1 | while IFS= read -r line; do
+    echo "[kindle-send] $line" > /proc/1/fd/2
+done
+STATUS=${PIPESTATUS[0]}
+
+if [ $STATUS -ne 0 ]; then
+    echo "[send.sh] ERROR: kindle-send failed with exit code $STATUS" > /proc/1/fd/2
+    exit 1
+fi
+
+echo "[send.sh] Success - Article sent to Kindle" > /proc/1/fd/2
