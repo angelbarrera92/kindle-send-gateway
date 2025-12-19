@@ -25,8 +25,10 @@ RUN chmod +x /app/send.sh
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-# Create necessary directories
-RUN mkdir -p /var/log/nginx /var/run /config /data
+# Create necessary directories and set permissions
+RUN mkdir -p /var/log/nginx /var/run /config /data && \
+    chown -R nginx:nginx /var/log/nginx /var/run /app && \
+    chmod 755 /var/run
 
 VOLUME /config
 VOLUME /data
