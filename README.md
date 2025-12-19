@@ -6,6 +6,7 @@ An nginx-based HTTP gateway wrapper for [kindle-send](https://github.com/nikhil1
 
 - HTTP endpoint `/send?url=<article-url>` to send articles to Kindle
 - Health check endpoint `/health` for monitoring
+- Comprehensive logging with prefixed output for easy debugging
 - Dockerized setup with nginx and fcgiwrap
 - Easy configuration via JSON file
 
@@ -51,6 +52,36 @@ docker run -d \
 
 ```bash
 curl "http://localhost:8080/send?url=https://zapier.com/blog/zapier-journey-beyond-ingress-nginx/"
+```
+
+The client will receive a quick acknowledgment:
+```
+Request accepted. Processing URL: https://zapier.com/blog/zapier-journey-beyond-ingress-nginx/
+```
+
+### Monitor logs
+
+View detailed processing logs on the server:
+
+```bash
+docker logs -f kindle-gateway
+```
+
+Logs are prefixed for easy identification:
+- `[entrypoint]` - Container startup messages
+- `[send.sh]` - Request handling
+- `[kindle-send]` - Article processing and sending
+- `[nginx]` - HTTP access logs
+
+Example log output:
+```
+[entrypoint] Starting nginx...
+[send.sh] Executing kindle-send with URL: https://example.com/article
+[kindle-send] Loaded configuration
+[kindle-send] Fetched https://example.com/article --> Article Title
+[kindle-send] Downloading Images
+[kindle-send] Mail sent successfully
+[nginx] 192.168.1.23 - - [19/Dec/2025:12:48:38 +0000] "GET /send?url=..." 200 106 "-" "curl/8.7.1" "-"
 ```
 
 ### Health check
