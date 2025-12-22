@@ -1,0 +1,29 @@
+{
+  "manifest_version": 2,
+  "name": "Send to Kindle",
+  "version": "1.0",
+  "description": "Send current page to your Kindle with one click",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "send-to-kindle@kindle-gateway.local"
+    }
+  },
+  "permissions": [
+    "activeTab",
+    "storage",
+    "notifications",
+    "<all_urls>"
+  ],
+  "browser_action": {
+    "default_icon": {
+      "48": "icon.svg"
+    },
+    "default_title": "Send to Kindle"
+  },
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "options_ui": {
+    "page": "options.html"
+  }
+}
