@@ -150,11 +150,20 @@ This project uses GitHub Actions to automatically build and publish Docker image
 
 ### Image Tags
 
-When you push to the repository, images are tagged with:
-- `latest` - Points to the main branch
-- `main` - Current main branch build
-- `<commit-sha>` - Specific commit
-- `v*` - Semantic version tags (when you create releases)
+When you push to the repository, images are tagged based on the context:
+
+- **Main branch**: `latest`, `main`, `<commit-sha>`
+- **Version tags**: `v*` (semantic versioning, e.g., `v1.0.0`, `1.0`)
+- **Feature branches**: `<branch-name>-<commit-sha>` (build only, no push)
+- **Pull Requests**: `pr-<PR-number>`, `<commit-sha>` (push enabled for same-repo PRs only)
+
+### Build Behavior
+
+- **Main branch & version tags**: Builds and pushes images to registry with registry-based caching
+- **Pull Requests** (same repo): Builds and pushes images for testing with `pr-<number>` tag
+- **Pull Requests** (forks): Build only, no push (security-restricted)
+- **Feature branches**: Build only, no push (to validate changes)
+- **Workflow dispatch**: Manual trigger available (requires explicit authorization)
 
 ### Example Usage with Public Images
 
@@ -165,6 +174,16 @@ docker pull ghcr.io/username/kindle-send-gateway:latest
 # Use a specific version
 docker pull ghcr.io/username/kindle-send-gateway:v1.0.0
 
+# Use a PR image for testing
+docker pull ghcr.io/username/kindle-send-gateway:pr-42
+
 # Use a specific commit
 docker pull ghcr.io/username/kindle-send-gateway:main-abc123def456
 ```
+
+### Security
+
+- Docker image pushes are restricted to this repository only
+- Fork pull requests cannot push images to the registry
+- Feature branches only build images locally (no registry push)
+- All pushes require proper authentication to GitHub Container Registry
