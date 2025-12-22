@@ -65,6 +65,23 @@ docker run -d \
 
 ## Usage
 
+### Firefox Extension (Recommended)
+
+The easiest way to send articles to your Kindle is using the Firefox extension. Simply click a button on any webpage to send it to your Kindle.
+
+**Installation:**
+1. Open Firefox and go to `about:debugging`
+2. Click "This Firefox" → "Load Temporary Add-on"
+3. Navigate to the `firefox-extension` folder and select `manifest.json`
+4. Configure your gateway URL in the extension settings (right-click icon → Manage Extension → Options)
+
+**Using the extension:**
+- Click the extension icon in your toolbar while viewing any article
+- You'll get a browser notification when the article is being sent
+- Check your Kindle device in a few minutes
+
+See [firefox-extension/README.md](firefox-extension/README.md) for more details.
+
 ### Send an article to Kindle
 
 ```bash
